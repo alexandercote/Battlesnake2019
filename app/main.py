@@ -36,7 +36,7 @@ def ping():
 
 @bottle.post('/start')
 def start():
-    data = bottle.request.json
+    #data = bottle.request.json
     #print(json.dumps(data))
 
     color = "#8B008B"   # dark magenta
@@ -91,9 +91,6 @@ def move():
     directions = ['up', 'down', 'left', 'right']
     random_selected_direction = random.choice(directions)
 
-    myhead_x = int(data['you']['body'][0]['x'])
-    myhead_y = int(data['you']['body'][0]['y'])
-
     # 1st check if move is deadly
     # 2nd check if move is dangerous
     # -> another snake head could move there
@@ -105,6 +102,23 @@ def move():
         if check_move_isdeadly(data, direction):
             death_directions.append[direction]
 
+    if( len(death_directions) == 4): # all 4 directions are death.
+        return move_response(random.choice(directions)) # doesn't matter. Dead anyway.
+
+    potential_directions = [direct for direct in directions if (direct not in death_directions)] # grab directions that ARE NOT deadly
+
+    for direction in potential_directions:
+        if check_move_isdangerous(data, direction):
+            dangerous_directions.append[direction]
+
+    safe_directions = [direct for direct in directions if (direct not in dangerous_directions)]
+    
+    if( len(safe_directions) == 0): # no directions is explicitely safe, go random dangerous.
+        return move_response(random.choice(dangerous_directions))
+    else: #have some safe direction
+        return move_response(random.choice(safe_directions))
+
+    
     return move_response(random_selected_direction)
 
 
@@ -165,18 +179,9 @@ def check_move_isdangerous(data, direction):
     return False
 
 
-
-
-        for spot in snake_body['body']:
-            if (new_x == spot["x"] and new_y == spot["y"]):
-                return True
-
-    return True
-
-
 @bottle.post('/end')
 def end():
-    data = bottle.request.json
+    #data = bottle.request.json
     return end_response()
 
 # Expose WSGI app (so gunicorn can find it)
