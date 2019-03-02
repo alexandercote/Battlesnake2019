@@ -131,10 +131,10 @@ def check_move_isdeadly(data, direction):
     # check not running into another snake
 
     # establish head position, and next position
-    myhead_x = data['you']['body'][0]['x']
-    myhead_y = data['you']['body'][0]['y']
-    new_x = myhead_x + Directions_dict[direction][0]  # take the head of my snake, and add the x direction 
-    new_y = myhead_y + Directions_dict[direction][1]  # take the head of my snake, and add the y direction 
+    myhead_x = int(data['you']['body'][0]['x'])
+    myhead_y = int(data['you']['body'][0]['y'])
+    new_x = myhead_x + int(Directions_dict[direction][0])  # take the head of my snake, and add the x direction 
+    new_y = myhead_y + int(Directions_dict[direction][1])  # take the head of my snake, and add the y direction 
 
     # 1 checking new x is on the board
     if new_x not in range(data['board']['width']):
@@ -158,8 +158,8 @@ def check_move_isdangerous(data, direction):
 
     myhead_x = int(data['you']['body'][0]['x'])
     myhead_y = int(data['you']['body'][0]['y'])
-    new_x = myhead_x + Directions_dict[direction][0]  # take the head of my snake, and add the x direction 
-    new_y = myhead_y + Directions_dict[direction][1]  # take the head of my snake, and add the y direction
+    new_x = myhead_x + int(Directions_dict[direction][0])  # take the head of my snake, and add the x direction 
+    new_y = myhead_y + int(Directions_dict[direction][1])  # take the head of my snake, and add the y direction
 
     # 1 Head Colisions
     snake_move_points = []
@@ -167,10 +167,10 @@ def check_move_isdangerous(data, direction):
     # create potential move areas around head (include death moves for their heads, won't matter for my snake.)
     for snake_head in data['board']['snakes']['body']:
         if(len(snake_head) >= len(data['you']['body'])): # can possibly die from this movement.
-            snake_move_points.append( snake_head['x'] + 1, snake_head['y'] + 0 ) # right
-            snake_move_points.append( snake_head['x'] - 1, snake_head['y'] + 0 ) # left
-            snake_move_points.append( snake_head['x'] + 0, snake_head['y'] - 1 ) # up
-            snake_move_points.append( snake_head['x'] + 0, snake_head['y'] + 1 ) # down
+            snake_move_points.append( int(snake_head['x'] + 1), int(snake_head['y'] + 0) ) # right
+            snake_move_points.append( int(snake_head['x'] - 1), int(snake_head['y'] + 0) ) # left
+            snake_move_points.append( int(snake_head['x'] + 0), int(snake_head['y'] - 1) ) # up
+            snake_move_points.append( int(snake_head['x'] + 0), int(snake_head['y'] + 1) ) # down
 
     for point in snake_move_points:
         if new_x == point[0] and new_y == point[1]:
