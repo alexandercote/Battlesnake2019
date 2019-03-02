@@ -89,7 +89,6 @@ def move():
 
     # Initial direction choice
     directions = ['up', 'down', 'left', 'right']
-    random_selected_direction = random.choice(directions)
 
     # 1st check if move is deadly
     # 2nd check if move is dangerous
@@ -114,12 +113,16 @@ def move():
     safe_directions = [direct for direct in directions if (direct not in dangerous_directions)]
     
     if( len(safe_directions) == 0): # no directions is explicitely safe, go random dangerous.
-        return move_response(random.choice(dangerous_directions))
+        movedir = random.choice(dangerous_directions)
+        print ("Moving in direction " + movedir)
+        return move_response(movedir)
     else: #have some safe direction
-        return move_response(random.choice(safe_directions))
+        movedir = random.choice(safe_directions)
+        print ("Moving in direction " + movedir)
+        return move_response(movedir)
 
     
-    return move_response(random_selected_direction)
+    return move_response('up')
 
 
 
