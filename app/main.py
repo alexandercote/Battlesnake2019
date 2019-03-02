@@ -176,26 +176,33 @@ def check_move_isdangerous(data, direction):
     myhead_y = int(data['you']['body'][0]['y'])
     new_x = myhead_x + int(Directions_dict[direction][0])  # take the head of my snake, and add the x direction 
     new_y = myhead_y + int(Directions_dict[direction][1])  # take the head of my snake, and add the y direction
+    print("Testing newx = " + str(new_x) + " and newy = " + str(new_y))
 
     # 1 Head Colisions
-    snake_move_points = []
+    snake_move_points_x = []
+    snake_move_points_y = []
     # get a list of snake heads and
     # create potential move areas around head (include death moves for their heads, won't matter for my snake.)
     for snake in data['board']['snakes']:
+        if(data['you']['name'] == snake['name']):
+            print("Found my snake in the list")
+            continue
         snake_head = snake['body'][0]
-        if(len(snake_head) >= len(data['you']['body']) ): # can possibly die from this movement.
-            snake_move_points.append( tuple([(int(snake_head['x']) + 1), (int(snake_head['y']) + 0)]) ) # right
-            snake_move_points.append( tuple([(int(snake_head['x']) - 1), (int(snake_head['y']) + 0)]) ) # left
-            snake_move_points.append( tuple([(int(snake_head['x']) + 0), (int(snake_head['y']) - 1)]) ) # up
-            snake_move_points.append( tuple([(int(snake_head['x']) + 0), (int(snake_head['y']) + 1)]) ) # down
+        print(snake_head)
+        if(len(snake['body']) >= len(data['you']['body']) ): # can possibly die from this movement.
+            snake_move_points_x.append( int(snake_head['x']) + 1 ) # right
+            snake_move_points_x.append( int(snake_head['x']) - 1 ) # left
+            snake_move_points_x.append( int(snake_head['x']) + 0 ) # up
+            snake_move_points_x.append( int(snake_head['x']) + 0 ) # down
+            snake_move_points_y.append( int(snake_head['y']) + 0 ) # right
+            snake_move_points_y.append( int(snake_head['y']) + 0 ) # left
+            snake_move_points_y.append( int(snake_head['y']) - 1 ) # up
+            snake_move_points_y.append( int(snake_head['y']) + 1 ) # down
 
-    #print("New x location = " + str(new_x))
-    #print("New y location = " + str(new_y))
-    print(snake_move_points)
-    for point in snake_move_points:
-        #print("Point x location = " + str(point[0]))
-        #print("Point y location = " + str(point[1]))
-        if new_x == point[0] and new_y == point[1]:
+    print(snake_move_points_x)
+    print(snake_move_points_y)
+    for index,point in enumerate(snake_move_points_x):
+        if new_x == snake_move_points_x[index] and new_y == snake_move_points_y[index]:
             return True  # point in is potential zones for other snake to move to. consider it dangerous.
 
     # 2 Consider small dead ends
