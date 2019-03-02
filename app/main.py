@@ -98,9 +98,12 @@ def move():
     # 2nd check if move is dangerous
     # -> another snake head could move there
 
-    for direction in directions
+    death_directions = []
+    dangerous_directions = []
 
-
+    for direction in directions:
+        if check_move_isdeadly(data, direction):
+            death_directions.append[direction]
 
     return move_response(random_selected_direction)
 
@@ -110,12 +113,26 @@ def check_move_isdeadly(data, direction):
     # check not going outside of border of map
     # check not running into another snake
 
-    myhead_x = int(data['you']['body'][0]['x'])
-    myhead_y = int(data['you']['body'][0]['y'])
+    # establish head position, and next position
+    myhead_x = data['you']['body'][0]['x']
+    myhead_y = data['you']['body'][0]['y']
     new_x = myhead_x + Directions_dict[direction][0]  # take the head of my snake, and add the x direction 
     new_y = myhead_y + Directions_dict[direction][1]  # take the head of my snake, and add the y direction 
 
-    return True
+    # 1 checking new x is on the board
+    if new_x not in range(data['board']['width']):
+        return True
+    if new_y not in range(data['board']['height']):
+        return True
+    
+    # 2 check not running into another snake body
+    for snake_body in data['board']['snakes']:
+        for spot in snake_body['body']:
+            if (new_x == spot["x"] and new_y == spot["y"]):
+                return True     
+
+    return False # move is not deadly
+
 
 def check_move_isdangerous(data, direction):
     # check not running into where another snake could be
@@ -126,6 +143,33 @@ def check_move_isdangerous(data, direction):
     myhead_y = int(data['you']['body'][0]['y'])
     new_x = myhead_x + Directions_dict[direction][0]  # take the head of my snake, and add the x direction 
     new_y = myhead_y + Directions_dict[direction][1]  # take the head of my snake, and add the y direction
+
+    # 1 Head Colisions
+    snake_move_points = []
+    # get a list of snake heads and
+    # create potential move areas around head (include death moves for their heads, won't matter for my snake.)
+    for snake_head in data['board']['snakes']['body']:
+        if(len(snake_head) >= len(data['you']['body'])): # can possibly die from this movement.
+            snake_move_points.append( snake_head['x'] + 1, snake_head['y'] + 0 ) # right
+            snake_move_points.append( snake_head['x'] - 1, snake_head['y'] + 0 ) # left
+            snake_move_points.append( snake_head['x'] + 0, snake_head['y'] - 1 ) # up
+            snake_move_points.append( snake_head['x'] + 0, snake_head['y'] + 1 ) # down
+
+    for point in snake_move_points:
+        if new_x == point[0] and new_y == point[1]:
+            return True  # point in is potential zones for other snake to move to. consider it dangerous.
+
+    # 2 Consider small dead ends
+        # TODO: Add more code here
+
+    return False
+
+
+
+
+        for spot in snake_body['body']:
+            if (new_x == spot["x"] and new_y == spot["y"]):
+                return True
 
     return True
 
