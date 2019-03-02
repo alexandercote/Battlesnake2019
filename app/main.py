@@ -146,7 +146,7 @@ def check_move_food(data, direction):
     new_y = myhead_y + int(Directions_dict[direction][1])  # take the head of my snake, and add the y direction 
 
     for food in data['board']['food']:
-        if (food[0] == new_x and food[1] == new_y):
+        if (int(food['x']) == new_x and int(food['y']) == new_y):
             return True
     
     return False
