@@ -8,6 +8,7 @@ from api import ping_response, start_response, move_response, end_response
 
 # direction dictionary
 Directions_dict = {'right': [1,0], 'left':[-1,0], 'up':[0,-1], 'down':[0,1]}
+directions = ['up', 'down', 'left', 'right']
 
 
 @bottle.route('/')
@@ -89,8 +90,8 @@ def move():
     #print(json.dumps(data))
 
     # Initial direction choice
-    directions = ['up', 'down', 'left', 'right']
     print("New Move!")
+
     # 1st check if move is deadly
     # 2nd check if move is dangerous
     # -> another snake head could move there
@@ -99,9 +100,13 @@ def move():
     dangerous_directions = []
     potential_directions = []
     safe_directions = []
+    smart_safe_directions = []
+    
+    myhead_x = int(data['you']['body'][0]['x'])
+    myhead_y = int(data['you']['body'][0]['y'])
 
     for direction in directions:
-        if check_move_isdeadly(data, direction):
+        if check_move_isdeadly(data, myhead_x, myhead_y, direction):
             print("Moving in " + direction + " is deadly!")
             sys.stdout.flush()
             death_directions.append(direction)
@@ -119,6 +124,16 @@ def move():
         else:
             safe_directions.append(direction)
     
+    for direction in safe_directions:
+        if look_ahead_by_one_isdeadly(data, direction):
+            death_directions.append(direction)
+        else:
+            smart_safe_directions.append(direction)
+
+    # if there are smart safe directions, set them as new safe directions
+    if(len(smart_safe_directions) != 0):
+         safe_directions = smart_safe_directions
+
     # find food
     for direction in safe_directions:
         print("Moving in " + direction + " is safe!")
@@ -139,6 +154,25 @@ def move():
     
     return move_response('up')
 
+def look_ahead_by_one_isdeadly(data, direction):
+    myhead_x = int(data['you']['body'][0]['x'])
+    myhead_y = int(data['you']['body'][0]['y'])
+    new_x = myhead_x + int(Directions_dict[direction][0])  # take the head of my snake, and add the x direction 
+    new_y = myhead_y + int(Directions_dict[direction][1])  # take the head of my snake, and add the y direction 
+
+    death_directions = []
+
+    for directionnext in directions:
+        next_x = new_x + int(Directions_dict[directionnext][0])
+        next_y = new_y + int(Directions_dict[directionnext][1])
+        if check_move_isdeadly(data, next_x, next_y, directionnext):
+            death_directions.append(directionnext)
+
+    if( len(death_directions) == 4): # all 4 directions are death.
+        return True
+    
+    return False
+
 def check_move_food(data, direction):
     myhead_x = int(data['you']['body'][0]['x'])
     myhead_y = int(data['you']['body'][0]['y'])
@@ -151,13 +185,11 @@ def check_move_food(data, direction):
     
     return False
 
-def check_move_isdeadly(data, direction):
+def check_move_isdeadly(data, myhead_x, myhead_y, direction):
     # check not going outside of border of map
     # check not running into another snake
 
     # establish head position, and next position
-    myhead_x = int(data['you']['body'][0]['x'])
-    myhead_y = int(data['you']['body'][0]['y'])
     new_x = myhead_x + int(Directions_dict[direction][0])  # take the head of my snake, and add the x direction 
     new_y = myhead_y + int(Directions_dict[direction][1])  # take the head of my snake, and add the y direction 
 
