@@ -119,9 +119,11 @@ def move():
         else:
             safe_directions.append(direction)
     
+    # find food
     for direction in safe_directions:
         print("Moving in " + direction + " is safe!")
-        sys.stdout.flush()
+        if check_move_food(data, direction):
+            return move_response(direction)
 
     if( len(safe_directions) == 0): # no directions is explicitely safe, go random dangerous.
         movedir = random.choice(dangerous_directions)
@@ -137,7 +139,17 @@ def move():
     
     return move_response('up')
 
+def check_move_food(data, direction):
+    myhead_x = int(data['you']['body'][0]['x'])
+    myhead_y = int(data['you']['body'][0]['y'])
+    new_x = myhead_x + int(Directions_dict[direction][0])  # take the head of my snake, and add the x direction 
+    new_y = myhead_y + int(Directions_dict[direction][1])  # take the head of my snake, and add the y direction 
 
+    for food in data['board']['food']:
+        if (food[0] == new_x and food[1] == new_y):
+            return True
+    
+    return False
 
 def check_move_isdeadly(data, direction):
     # check not going outside of border of map
