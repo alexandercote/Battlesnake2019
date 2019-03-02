@@ -5,6 +5,10 @@ import bottle
 
 from api import ping_response, start_response, move_response, end_response
 
+# direction dictionary
+Directions_dict = {'right': [1,0], 'left':[-1,0], 'up':[0,-1], 'down':[0,1]}
+
+
 @bottle.route('/')
 def index():
     return '''
@@ -33,45 +37,102 @@ def ping():
 @bottle.post('/start')
 def start():
     data = bottle.request.json
+    #print(json.dumps(data))
 
-    """
-    TODO: If you intend to have a stateful snake AI,
-            initialize your snake state here using the
-            request's data if necessary.
-    """
-    print(json.dumps(data))
+    color = "#8B008B"   # dark magenta
+    head = "pixel"
+    tail = "sharp"
 
-    color = "#00FF00"
-
-    return start_response(color)
+    return start_response(color, head, tail)
 
 
 @bottle.post('/move')
 def move():
     data = bottle.request.json
+    """
+    DATA JSON FORMAT:
+    {
+        "game": {
+            "id": "game-id-string"
+        },
+        "turn": "int",
+        "board": {
+            "height": "int",
+            "width": "int",
+            "food": [{
+            "x": "int",
+            "y": "int"
+            }],
+            "snakes": [{
+            "id": "int",
+            "name": "string",
+            "health": "int",
+            "body": [{
+                "x": "int",
+                "y": "int"
+            }]
+            }]
+        },
+        "you": {
+            "id": "int",
+            "name": "string",
+            "health": "int",
+            "body": [{
+            "x": "int",
+            "y": "int"
+            }]
+        }
+    }
+    """
 
-    """
-    TODO: Using the data from the endpoint request object, your
-            snake AI must choose a direction to move in.
-    """
     print(json.dumps(data))
 
+    # Initial direction choice
     directions = ['up', 'down', 'left', 'right']
-    direction = random.choice(directions)
+    random_selected_direction = random.choice(directions)
 
-    return move_response(direction)
+    myhead_x = int(data['you']['body'][0]['x'])
+    myhead_y = int(data['you']['body'][0]['y'])
+
+    # 1st check if move is deadly
+    # 2nd check if move is dangerous
+    # -> another snake head could move there
+
+    for direction in directions
+
+
+
+    return move_response(random_selected_direction)
+
+
+
+def check_move_isdeadly(data, direction):
+    # check not going outside of border of map
+    # check not running into another snake
+
+    myhead_x = int(data['you']['body'][0]['x'])
+    myhead_y = int(data['you']['body'][0]['y'])
+    new_x = myhead_x + Directions_dict[direction][0]  # take the head of my snake, and add the x direction 
+    new_y = myhead_y + Directions_dict[direction][1]  # take the head of my snake, and add the y direction 
+
+    return True
+
+def check_move_isdangerous(data, direction):
+    # check not running into where another snake could be
+    # -> Head on collision of unequal length snakes - shorter snake dies.
+    # -> Head on collision of equal length snakes - both snakes die.
+
+    myhead_x = int(data['you']['body'][0]['x'])
+    myhead_y = int(data['you']['body'][0]['y'])
+    new_x = myhead_x + Directions_dict[direction][0]  # take the head of my snake, and add the x direction 
+    new_y = myhead_y + Directions_dict[direction][1]  # take the head of my snake, and add the y direction
+
+    return True
 
 
 @bottle.post('/end')
 def end():
     data = bottle.request.json
-
-    """
-    TODO: If your snake AI was stateful,
-        clean up any stateful objects here.
-    """
-    print(json.dumps(data))
-
     return end_response()
 
 # Expose WSGI app (so gunicorn can find it)
