@@ -99,7 +99,7 @@ def move():
 
     for direction in directions:
         if check_move_isdeadly(data, direction):
-            death_directions.append[direction]
+            death_directions.append(direction)
 
     if( len(death_directions) == 4): # all 4 directions are death.
         return move_response(random.choice(directions)) # doesn't matter. Dead anyway.
@@ -108,7 +108,7 @@ def move():
 
     for direction in potential_directions:
         if check_move_isdangerous(data, direction):
-            dangerous_directions.append[direction]
+            dangerous_directions.append(direction)
 
     safe_directions = [direct for direct in directions if (direct not in dangerous_directions)]
     
