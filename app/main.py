@@ -157,9 +157,12 @@ def check_move_isdeadly(data, direction):
     
     # 2 check not running into another snake body
     for snake_body in data['board']['snakes']:
-        for spot in snake_body['body']:
+        for index, spot in enumerate(snake_body['body']):
             if (new_x == spot["x"] and new_y == spot["y"]):
-                return True     
+                if(index == len(snake_body['body']) -1 ): # end of the snake, hope the snake moves and its safe.
+                    continue
+                else:
+                    return True     
 
     return False # move is not deadly
 
@@ -186,7 +189,11 @@ def check_move_isdangerous(data, direction):
             snake_move_points.append( (int(snake_head['x'] + 0), int(snake_head['y'] - 1)) ) # up
             snake_move_points.append( (int(snake_head['x'] + 0), int(snake_head['y'] + 1)) ) # down
 
+    print("New x location = " + str(new_x))
+    print("New y location = " + str(new_y))
     for point in snake_move_points:
+        print("Point x location = " + str(point[0]))
+        print("Point y location = " + str(point[1]))
         if new_x == point[0] and new_y == point[1]:
             return True  # point in is potential zones for other snake to move to. consider it dangerous.
 
