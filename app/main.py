@@ -2,6 +2,7 @@ import json
 import os
 import random
 import bottle
+import sys
 
 from api import ping_response, start_response, move_response, end_response
 
@@ -85,40 +86,52 @@ def move():
     }
     """
 
-    print(json.dumps(data))
+    #print(json.dumps(data))
 
     # Initial direction choice
     directions = ['up', 'down', 'left', 'right']
-
+    print("New Move!")
     # 1st check if move is deadly
     # 2nd check if move is dangerous
     # -> another snake head could move there
 
     death_directions = []
     dangerous_directions = []
+    potential_directions = []
+    safe_directions = []
 
     for direction in directions:
         if check_move_isdeadly(data, direction):
+            print("Moving in " + direction + " is deadly!")
+            sys.stdout.flush()
             death_directions.append(direction)
+        else:
+            potential_directions.append(direction)
 
     if( len(death_directions) == 4): # all 4 directions are death.
         return move_response(random.choice(directions)) # doesn't matter. Dead anyway.
 
-    potential_directions = [direct for direct in directions if (direct not in death_directions)] # grab directions that ARE NOT deadly
-
     for direction in potential_directions:
         if check_move_isdangerous(data, direction):
+            print("Moving in " + direction + " is dangerous!")
+            sys.stdout.flush()
             dangerous_directions.append(direction)
-
-    safe_directions = [direct for direct in directions if (direct not in dangerous_directions)]
+        else:
+            safe_directions.append(direction)
     
+    for direction in safe_directions:
+        print("Moving in " + direction + " is safe!")
+        sys.stdout.flush()
+
     if( len(safe_directions) == 0): # no directions is explicitely safe, go random dangerous.
         movedir = random.choice(dangerous_directions)
-        print ("Moving in direction " + movedir)
+        print("Moving in direction " + movedir)
+        sys.stdout.flush()
         return move_response(movedir)
     else: #have some safe direction
         movedir = random.choice(safe_directions)
-        print ("Moving in direction " + movedir)
+        print("Moving in direction " + movedir)
+        sys.stdout.flush()
         return move_response(movedir)
 
     
