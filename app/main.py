@@ -165,7 +165,7 @@ def check_move_isdangerous(data, direction):
     snake_move_points = []
     # get a list of snake heads and
     # create potential move areas around head (include death moves for their heads, won't matter for my snake.)
-    for snake_head in data['board']['snakes']['body']:
+    for snake_head in data['board']['snakes']['body'][0]:
         if(len(snake_head) >= len(data['you']['body']) ): # can possibly die from this movement.
             snake_move_points.append( int(snake_head['x'] + 1), int(snake_head['y'] + 0) ) # right
             snake_move_points.append( int(snake_head['x'] - 1), int(snake_head['y'] + 0) ) # left
